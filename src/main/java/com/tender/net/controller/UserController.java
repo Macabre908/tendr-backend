@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -20,9 +22,12 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/userSignUp")
-    public ResponseEntity<HttpStatus> userSignUp(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> userSignUp(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        userRepository.save(user);
+        Map<String, String> map = new HashMap<>();
+        map.put("status", "success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(map);
     }
 
 }
